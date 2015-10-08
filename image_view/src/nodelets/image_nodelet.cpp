@@ -133,9 +133,9 @@ void ImageNodelet::onInit()
   local_nh.param("filename_format", format_string, std::string("frame%04i.jpg"));
   filename_format_.parse(format_string);
 
-  cv::namedWindow(window_name_, autosize ? cv::WND_PROP_AUTOSIZE : 0);
-  cv::setMouseCallback(window_name_, &ImageNodelet::mouseCb, this);
-  
+  //cv::namedWindow(window_name_, autosize ? cv::WND_PROP_AUTOSIZE : 0);
+  //cv::setMouseCallback(window_name_, &ImageNodelet::mouseCb, this);
+
 #ifdef HAVE_GTK
   // Register appropriate handler for when user closes the display window
   GtkWidget *widget = GTK_WIDGET( cvGetWindowHandle(window_name_.c_str()) );
@@ -184,8 +184,10 @@ void ImageNodelet::imageCb(const sensor_msgs::ImageConstPtr& msg)
   // Must release the mutex before calling cv::imshow, or can deadlock against
   // OpenCV's window mutex.
   image_mutex_.unlock();
-  if (!last_image_.empty())
+  if (!last_image_.empty()){
     cv::imshow(window_name_, last_image_);
+    cv::waitKey(1);
+  }
 }
 
 void ImageNodelet::mouseCb(int event, int x, int y, int flags, void* param)
@@ -202,7 +204,7 @@ void ImageNodelet::mouseCb(int event, int x, int y, int flags, void* param)
   }
   if (event != cv::EVENT_RBUTTONDOWN)
     return;
-  
+
   boost::lock_guard<boost::mutex> guard(this_->image_mutex_);
 
   const cv::Mat &image = this_->last_image_;

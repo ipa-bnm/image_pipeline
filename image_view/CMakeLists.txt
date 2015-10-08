@@ -42,7 +42,7 @@ if(ANDROID)
 endif()
 
 find_package(GTK2)
-add_definitions(-DHAVE_GTK)
+#add_definitions(-DHAVE_GTK)
 include_directories(SYSTEM ${GTK2_INCLUDE_DIRS})
 
 # Nodelet library
